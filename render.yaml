@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: telepredict
+    runtime: python
+    rootDir: TelePredict_FullProject-main/telecom_project
+    buildCommand: pip install -r ../../requirements.txt && python train_model.py
+    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT --timeout 120
+    plan: free
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.10
