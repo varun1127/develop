@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TelePredict — Churn Intelligence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"/>
+</head>
+<body>
+
+<!-- ── NAV ──────────────────────────────────────────────────────── -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="logo" href="/">
+      <span class="logo-mark">▲</span>
+      <span class="logo-text">TelePredict</span>
+    </a>
+    <div class="nav-links">
+      <a href="/" class="nav-a active">Predict</a>
+      <a href="/analytics" class="nav-a">Analytics</a>
+    </div>
+    <div class="nav-badge">ML Platform v1.0</div>
+  </div>
+</nav>
+
+<!-- ── HERO ─────────────────────────────────────────────────────── -->
+<header class="hero">
+  <div class="hero-noise"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-body">
+    <div class="hero-chip">
+      <span class="chip-dot"></span>
+      5-Model Ensemble · Real-time Inference · 7,043 Training Records
+    </div>
+    <h1 class="hero-h1">Predict Customer<br/><em>Churn Probability</em></h1>
+    <p class="hero-p">Enter a customer profile below. Our Random Forest model returns an instant probability score with risk classification and tailored retention strategy.</p>
+    <div class="hero-pills">
+      {% for name, m in results.items() %}
+      <div class="pill">
+        <span class="pill-name">{{ name.split()[0] }}</span>
+        <span class="pill-score">{{ m['Accuracy'] }}%</span>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</header>
+
+<!-- ── MAIN ──────────────────────────────────────────────────────── -->
+<main class="layout">
+  <!-- LEFT: Form -->
+  <section class="card form-card">
+    <div class="card-head">
+      <div class="card-icon">◉</div>
+      <div>
+        <h2 class="card-title">Customer Profile</h2>
+        <p class="card-sub">21 feature inputs · Live ML inference</p>
+      </div>
+    </div>
+
+    <form id="pForm">
+
+      <div class="fieldset">
+        <div class="fieldset-label">Demographics</div>
+        <div class="grid3">
+          <div class="fld">
+            <label>Gender</label>
+            <select name="gender"><option>Male</option><option>Female</option></select>
+          </div>
+          <div class="fld">
+            <label>Senior Citizen</label>
+            <select name="SeniorCitizen"><option value="0">No</option><option value="1">Yes</option></select>
+          </div>
+          <div class="fld">
+            <label>Partner</label>
+            <select name="Partner"><option>No</option><option>Yes</option></select>
+          </div>
+          <div class="fld">
+            <label>Dependents</label>
+            <select name="Dependents"><option>No</option><option>Yes</option></select>
+          </div>
+          <div class="fld">
+            <label>Tenure (months)</label>
+            <input type="number" name="tenure" value="12" min="0" max="72"/>
+          </div>
+        </div>
+      </div>
+
+      <div class="fieldset">
+        <div class="fieldset-label">Services</div>
+        <div class="grid3">
+          <div class="fld">
+            <label>Phone Service</label>
+            <select name="PhoneService"><option>Yes</option><option>No</option></select>
+          </div>
+          <div class="fld">
+            <label>Multiple Lines</label>
+            <select name="MultipleLines"><option>No</option><option>Yes</option><option>No phone service</option></select>
+          </div>
+          <div class="fld">
+            <label>Internet Service</label>
+            <select name="InternetService"><option>DSL</option><option>Fiber optic</option><option>No</option></select>
+          </div>
+          <div class="fld">
+            <label>Online Security</label>
+            <select name="OnlineSecurity"><option>No</option><option>Yes</option><option>No internet service</option></select>
+          </div>
+          <div class="fld">
+            <label>Online Backup</label>
+            <select name="OnlineBackup"><option>No</option><option>Yes</option><option>No internet service</option></select>
+          </div>
+          <div class="fld">
+            <label>Device Protection</label>
+            <select name="DeviceProtection"><option>No</option><option>Yes</option><option>No internet service</option></select>
+          </div>
+          <div class="fld">
+            <label>Tech Support</label>
+            <select name="TechSupport"><option>No</option><option>Yes</option><option>No internet service</option></select>
+          </div>
+          <div class="fld">
+            <label>Streaming TV</label>
+            <select name="StreamingTV"><option>No</option><option>Yes</option><option>No internet service</option></select>
+          </div>
+          <div class="fld">
+            <label>Streaming Movies</label>
+            <select name="StreamingMovies"><option>No</option><option>Yes</option><option>No internet service</option></select>
+          </div>
+        </div>
+      </div>
+
+      <div class="fieldset">
+        <div class="fieldset-label">Contract & Billing</div>
+        <div class="grid3">
+          <div class="fld">
+            <label>Contract Type</label>
+            <select name="Contract"><option>Month-to-month</option><option>One year</option><option>Two year</option></select>
+          </div>
+          <div class="fld">
+            <label>Paperless Billing</label>
+            <select name="PaperlessBilling"><option>Yes</option><option>No</option></select>
+          </div>
+          <div class="fld">
+            <label>Payment Method</label>
+            <select name="PaymentMethod">
+              <option>Electronic check</option>
+              <option>Mailed check</option>
+              <option>Bank transfer (automatic)</option>
+              <option>Credit card (automatic)</option>
+            </select>
+          </div>
+          <div class="fld">
+            <label>Monthly Charges ($)</label>
+            <input type="number" name="MonthlyCharges" value="65.00" step="0.01"/>
+          </div>
+          <div class="fld">
+            <label>Total Charges ($)</label>
+            <input type="number" name="TotalCharges" value="780.00" step="0.01"/>
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-predict" id="predictBtn">
+        <span class="btn-icon">⚡</span> Generate Prediction
+      </button>
+    </form>
+  </section>
+
+  <!-- RIGHT: Result + Leaderboard -->
+  <aside class="sidebar">
+
+    <!-- Result card -->
+    <div class="card result-card" id="resultCard">
+      <div class="result-idle" id="resultIdle">
+        <div class="idle-icon">◎</div>
+        <p>Submit the form to generate a live churn probability score.</p>
+      </div>
+      <div class="result-live" id="resultLive" style="display:none">
+        <div class="gauge-wrap">
+          <svg viewBox="0 0 200 110" class="gauge-svg">
+            <path d="M 18 100 A 82 82 0 0 1 182 100" fill="none" stroke="#1E293B" stroke-width="14" stroke-linecap="round"/>
+            <path id="gaugeArc" d="M 18 100 A 82 82 0 0 1 182 100" fill="none" stroke="#6366F1"
+                  stroke-width="14" stroke-linecap="round"
+                  stroke-dasharray="257" stroke-dashoffset="257"/>
+          </svg>
+          <div class="gauge-center">
+            <span class="gauge-pct" id="gaugePct">—</span>
+            <span class="gauge-label" id="gaugeLabel">—</span>
+          </div>
+        </div>
+        <div class="risk-badge" id="riskBadge">—</div>
+        <hr class="sep"/>
+        <div class="rec-box" id="recBox"></div>
+        <div class="chips-row">
+          <div class="chip"><span class="chip-k">Verdict</span><span class="chip-v" id="verdict">—</span></div>
+          <div class="chip"><span class="chip-k">Confidence</span><span class="chip-v" id="confVal">—</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Leaderboard -->
+    <div class="card lb-card">
+      <div class="card-head">
+        <div class="card-icon">◈</div>
+        <div>
+          <h2 class="card-title">Model Leaderboard</h2>
+          <p class="card-sub">Ranked by Accuracy · 7,043 records</p>
+        </div>
+      </div>
+      <div class="lb-list">
+        {% for name, m in results.items() %}
+        <div class="lb-row">
+          <span class="lb-name">{{ name }}</span>
+          <div class="lb-bar-bg">
+            <div class="lb-bar" style="width:{{ m['Accuracy'] }}%"></div>
+          </div>
+          <span class="lb-score">{{ m['Accuracy'] }}%</span>
+        </div>
+        {% endfor %}
+      </div>
+      <a href="/analytics" class="view-all">View full analytics →</a>
+    </div>
+
+  </aside>
+</main>
+
+<!-- ── FOOTER ─────────────────────────────────────────────────────── -->
+<footer class="footer">
+  <span>TelePredict &copy; 2025</span>
+  <span>Built with Python · Flask · Scikit-learn · Bootstrap</span>
+  <a href="/analytics">Analytics →</a>
+</footer>
+
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

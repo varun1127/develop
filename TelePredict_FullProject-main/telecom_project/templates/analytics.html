@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Analytics — TelePredict</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"/>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="logo" href="/">
+      <span class="logo-mark">▲</span>
+      <span class="logo-text">TelePredict</span>
+    </a>
+    <div class="nav-links">
+      <a href="/" class="nav-a">Predict</a>
+      <a href="/analytics" class="nav-a active">Analytics</a>
+    </div>
+    <div class="nav-badge">ML Platform v1.0</div>
+  </div>
+</nav>
+
+<header class="hero hero--sm">
+  <div class="hero-noise"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-body">
+    <div class="hero-chip"><span class="chip-dot"></span>Model Performance · Feature Analysis · Churn Insights</div>
+    <h1 class="hero-h1">Analytics <em>Dashboard</em></h1>
+    <p class="hero-p">Comprehensive evaluation of 5 ML models trained on {{ n_samples|int|string }} Telco customer records with a {{ churn_rate }}% churn rate.</p>
+  </div>
+</header>
+
+<main class="main-analytics">
+
+  <!-- KPI strip -->
+  <div class="kpi-strip">
+    {% set best_m = results.values()|list %}
+    <div class="kpi-card">
+      <div class="kpi-icon">🎯</div>
+      <div class="kpi-val">{{ results['SVM']['Accuracy'] if 'SVM' in results else '—' }}%</div>
+      <div class="kpi-k">Best Accuracy</div>
+      <div class="kpi-model">SVM</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-icon">📈</div>
+      <div class="kpi-val">{{ results['Logistic Regression']['ROC-AUC'] if 'Logistic Regression' in results else '—' }}%</div>
+      <div class="kpi-k">Best ROC-AUC</div>
+      <div class="kpi-model">Logistic Regression</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-icon">🔍</div>
+      <div class="kpi-val">{{ results['Decision Tree']['F1 Score'] if 'Decision Tree' in results else '—' }}%</div>
+      <div class="kpi-k">Best F1 Score</div>
+      <div class="kpi-model">Decision Tree</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-icon">📡</div>
+      <div class="kpi-val">5</div>
+      <div class="kpi-k">Models Trained</div>
+      <div class="kpi-model">LR · DT · RF · SVM · GBM</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-icon">🧮</div>
+      <div class="kpi-val">{{ n_samples }}</div>
+      <div class="kpi-k">Training Records</div>
+      <div class="kpi-model">80 / 20 stratified split</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-icon">⚠️</div>
+      <div class="kpi-val">{{ churn_rate }}%</div>
+      <div class="kpi-k">Churn Rate</div>
+      <div class="kpi-model">Class imbalance challenge</div>
+    </div>
+  </div>
+
+  <!-- Results table -->
+  <div class="card full-card">
+    <div class="card-head">
+      <div class="card-icon">🏆</div>
+      <div><h2 class="card-title">Model Performance Comparison</h2><p class="card-sub">Evaluated on 20% held-out test set</p></div>
+    </div>
+    <div class="tbl-wrap">
+      <table class="rt">
+        <thead>
+          <tr>
+            <th>Model</th><th>Accuracy</th><th>Precision</th><th>Recall</th><th>F1 Score</th><th>ROC-AUC</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for name, m in results.items() %}
+          <tr class="{{ 'row-best' if name == best else '' }}">
+            <td class="model-cell">{{ name }}{% if name == best %} <span class="best-tag">BEST AUC</span>{% endif %}</td>
+            <td>
+              <div class="td-bar-wrap">
+                <div class="td-bar acc" style="width:{{ m['Accuracy'] }}%"></div>
+                <span>{{ m['Accuracy'] }}%</span>
+              </div>
+            </td>
+            <td>
+              <div class="td-bar-wrap">
+                <div class="td-bar prec" style="width:{{ m['Precision'] }}%"></div>
+                <span>{{ m['Precision'] }}%</span>
+              </div>
+            </td>
+            <td>
+              <div class="td-bar-wrap">
+                <div class="td-bar rec" style="width:{{ m['Recall'] }}%"></div>
+                <span>{{ m['Recall'] }}%</span>
+              </div>
+            </td>
+            <td>
+              <div class="td-bar-wrap">
+                <div class="td-bar f1" style="width:{{ m['F1 Score'] }}%"></div>
+                <span>{{ m['F1 Score'] }}%</span>
+              </div>
+            </td>
+            <td>
+              <div class="td-bar-wrap">
+                <div class="td-bar auc" style="width:{{ m['ROC-AUC'] }}%"></div>
+                <span>{{ m['ROC-AUC'] }}%</span>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Charts 2-col grid -->
+  <div class="chart-grid">
+    <div class="card chart-card">
+      <h3 class="chart-title">Model Comparison — All Metrics</h3>
+      <img src="{{ url_for('static', filename='img/model_comparison.png') }}" class="chart-img" alt="Model Comparison"/>
+    </div>
+    <div class="card chart-card">
+      <h3 class="chart-title">ROC Curves — All 5 Models</h3>
+      <img src="{{ url_for('static', filename='img/roc_curves.png') }}" class="chart-img" alt="ROC Curves"/>
+    </div>
+    <div class="card chart-card">
+      <h3 class="chart-title">Confusion Matrix — Best Model</h3>
+      <img src="{{ url_for('static', filename='img/confusion_matrix.png') }}" class="chart-img" alt="Confusion Matrix"/>
+    </div>
+    <div class="card chart-card">
+      <h3 class="chart-title">Feature Importance — Random Forest</h3>
+      <img src="{{ url_for('static', filename='img/feature_importance.png') }}" class="chart-img" alt="Feature Importance"/>
+    </div>
+  </div>
+
+  <!-- Full-width charts -->
+  <div class="card full-card chart-card">
+    <h3 class="chart-title">Churn Distribution & Churn Rate by Tenure</h3>
+    <img src="{{ url_for('static', filename='img/churn_analysis.png') }}" class="chart-img" alt="Churn Analysis"/>
+  </div>
+  <div class="card full-card chart-card">
+    <h3 class="chart-title">Churn Heatmap: Contract × Internet Service</h3>
+    <img src="{{ url_for('static', filename='img/churn_heatmap.png') }}" class="chart-img" alt="Churn Heatmap"/>
+  </div>
+  <div class="card full-card chart-card">
+    <h3 class="chart-title">Monthly Charges Distribution by Churn Status</h3>
+    <img src="{{ url_for('static', filename='img/charges_dist.png') }}" class="chart-img" alt="Charges"/>
+  </div>
+
+  <!-- Methodology pipeline -->
+  <div class="card full-card">
+    <div class="card-head">
+      <div class="card-icon">🧪</div>
+      <div><h2 class="card-title">ML Pipeline Methodology</h2><p class="card-sub">8-step end-to-end workflow</p></div>
+    </div>
+    <div class="pipeline">
+      {% set steps = [
+        ('01','📥','Data Collection','Telco Customer Churn dataset · 7,043 records · 21 features'),
+        ('02','🧹','Data Cleaning','Impute missing TotalCharges · fix dtypes · drop customerID'),
+        ('03','🔍','EDA','Churn distribution · correlations · tenure vs churn patterns'),
+        ('04','⚙️','Feature Engineering','ChargesPerMonth · TenureGroup · NumServices (3 new features)'),
+        ('05','🤖','Model Training','5 algorithms · 80/20 stratified split · StandardScaler for LR & SVM'),
+        ('06','📊','Evaluation','Accuracy · Precision · Recall · F1 · ROC-AUC on held-out test set'),
+        ('07','💾','Serialisation','Best model saved via pickle with scaler & label encoders'),
+        ('08','🚀','Deployment','Flask REST API · Bootstrap 5 frontend · /predict · /analytics'),
+      ] %}
+      {% for num, icon, title, desc in steps %}
+      <div class="pipe-step">
+        <div class="pipe-num">{{ num }}</div>
+        <div class="pipe-icon">{{ icon }}</div>
+        <div class="pipe-body">
+          <div class="pipe-title">{{ title }}</div>
+          <div class="pipe-desc">{{ desc }}</div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+</main>
+
+<footer class="footer">
+  <span>TelePredict &copy; 2025</span>
+  <span>Python · Flask · Scikit-learn · Matplotlib · Bootstrap</span>
+  <a href="/">← Back to Predict</a>
+</footer>
+</body>
+</html>

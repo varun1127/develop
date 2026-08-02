@@ -1,0 +1,6 @@
+,Accuracy,Precision,Recall,F1 Score,ROC-AUC
+Logistic Regression,78.85,59.41,18.93,28.71,76.82
+Decision Tree,76.93,45.92,14.2,21.69,74.97
+Random Forest,77.57,50.52,15.46,23.67,75.07
+SVM,77.79,64.29,2.84,5.44,69.8
+Gradient Boosting,78.28,55.79,16.72,25.73,77.17
